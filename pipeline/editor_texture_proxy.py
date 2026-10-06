@@ -1,7 +1,17 @@
 """Resize color images normally and preserve independent terrain weight channels."""
 
 import hashlib
+from pathlib import Path
 from PIL import Image
+
+
+def source_image_path(path, root):
+    # Blender uses // for paths relative to the .blend. On Windows, pathlib
+    # otherwise interprets that prefix as an absolute UNC network path.
+    if path.startswith("//"):
+        return (root / path[2:]).resolve()
+    source = Path(path)
+    return (source if source.is_absolute() else root / source).resolve()
 
 
 def make_proxy(source, output, channel_packed=False):

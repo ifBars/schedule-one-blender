@@ -46,6 +46,18 @@ class BindingTests(unittest.TestCase):
 
 
 class ProxyTests(unittest.TestCase):
+    def test_blender_relative_path_is_not_a_network_share(self):
+        root = ROOT / "builds/synthetic"
+        expected = (root / "extracted/textures/synthetic.png").resolve()
+        self.assertEqual(
+            proxy.source_image_path("//extracted/textures/synthetic.png", root),
+            expected,
+        )
+        self.assertEqual(
+            proxy.source_image_path("extracted/textures/synthetic.png", root), expected
+        )
+        self.assertEqual(proxy.source_image_path(str(expected), root), expected)
+
     def test_zero_alpha_preserves_grass_and_fourth_weight(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

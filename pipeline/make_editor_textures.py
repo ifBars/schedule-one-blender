@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import json
-from editor_texture_proxy import make_proxy
+from editor_texture_proxy import make_proxy, source_image_path
 
 root = Path(__file__).resolve().parent
 output = root / "editor_textures"
@@ -19,9 +19,7 @@ terrain_controls = {
 manifest = {}
 raw_before = raw_after = 0
 for i, item in enumerate(images):
-    source = Path(item["path"])
-    if not source.is_absolute():
-        source = root / item["path"].removeprefix("//")
+    source = source_image_path(item["path"], root)
     key = str(source).lower()
     if key in manifest:
         continue

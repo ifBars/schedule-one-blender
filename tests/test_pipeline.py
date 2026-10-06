@@ -154,6 +154,31 @@ class InputTests(unittest.TestCase):
 
 
 class RepositoryAuditTests(unittest.TestCase):
+    def test_deleted_asset_is_still_rejected_in_history(self):
+        import subprocess
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+
+            def git(*args):
+                return subprocess.check_output(
+                    ["git", *args], cwd=root, stderr=subprocess.DEVNULL
+                )
+
+            git("init", "-b", "main")
+            git("config", "user.name", "Synthetic Test")
+            git("config", "user.email", "synthetic@example.invalid")
+            (root / "forbidden.blend").write_bytes(
+                b"invented fixture, not Blender or game data"
+            )
+            git("add", "forbidden.blend")
+            git("-c", "commit.gpgsign=false", "commit", "-m", "synthetic initial")
+            git("rm", "forbidden.blend")
+            git("-c", "commit.gpgsign=false", "commit", "-m", "synthetic removal")
+            self.assertTrue(
+                any("forbidden.blend" in error for error in audit.audit_history(root))
+            )
+
     def test_reusable_stage_boundaries_survive_formatting(self):
         extractor = (ROOT / "pipeline/extract_main.py").read_text(encoding="utf-8")
         compile(extractor.split("# STAGE: RENDERERS")[0], "extract_helpers", "exec")

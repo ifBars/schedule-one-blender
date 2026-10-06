@@ -50,5 +50,5 @@ untested operating system is supported because the code compiles.
 Build checkpoints bind input paths/sizes/timestamps and source hashes. Resume only
 with the same inputs/tooling; after changing code, use a new output directory.
 Completed `.blend` files are hash-checked to avoid overwriting user edits.
-Publication requires a clean tracked-file audit; Git ignore rules alone are not
+Publication requires a clean index and reachable-history audit; Git ignore rules alone are not
 proof that a repository contains no game assets.

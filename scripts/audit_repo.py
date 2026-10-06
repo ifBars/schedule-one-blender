@@ -50,6 +50,41 @@ def inspect_blob(name, content, mode="100644"):
     return errors
 
 
+def check_object(name, object_id, mode, root):
+    if not allowed_path(name) or mode not in {"100644", "100755"}:
+        return inspect_blob(name, b"", mode)
+    size = int(subprocess.check_output(["git", "cat-file", "-s", object_id], cwd=root))
+    if size > 512 * 1024:
+        return ["unexpectedly large source file"]
+    content = subprocess.check_output(["git", "cat-file", "blob", object_id], cwd=root)
+    return inspect_blob(name, content, mode)
+
+
+def audit_history(root):
+    failures = []
+    seen = set()
+    revisions = subprocess.check_output(
+        ["git", "rev-list", "--all"], cwd=root, text=True
+    ).splitlines()
+    for revision in revisions:
+        tree = subprocess.check_output(
+            ["git", "ls-tree", "-r", "-z", revision], cwd=root
+        )
+        for record in tree.split(b"\0"):
+            if not record:
+                continue
+            metadata, name = record.decode("utf-8").split("\t", 1)
+            mode, kind, object_id = metadata.split()
+            identity = (name, mode, object_id)
+            if identity in seen:
+                continue
+            seen.add(identity)
+            errors = check_object(name, object_id, mode, root)
+            if errors:
+                failures.append(f"{revision[:8]}:{name}: {', '.join(errors)}")
+    return failures
+
+
 def main():
     listing = subprocess.check_output(["git", "ls-files", "--stage", "-z"], cwd=ROOT)
     failures = []
@@ -59,10 +94,7 @@ def main():
             continue
         metadata, name = record.decode("utf-8").split("\t", 1)
         mode, object_id, stage = metadata.split()
-        content = subprocess.check_output(
-            ["git", "cat-file", "blob", object_id], cwd=ROOT
-        )
-        errors = inspect_blob(name, content, mode)
+        errors = check_object(name, object_id, mode, ROOT)
         if stage != "0":
             errors.append("unresolved index stage")
         if errors:
@@ -72,11 +104,12 @@ def main():
         failures.append(
             "No staged/tracked files found; stage the intended source before auditing."
         )
+    failures.extend(audit_history(ROOT))
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1
     print(
-        f"PASS: {count} tracked source/documentation files; no binary or generated asset paths."
+        f"PASS: {count} tracked source/documentation files; reachable Git history also contains no rejected assets."
     )
     return 0
 

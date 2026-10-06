@@ -79,6 +79,7 @@ Save your own project under a new name. Add expansion content to
 - [Build phases, resume, troubleshooting](docs/BUILD.md)
 - [Agent instructions and validation contract](AGENTS.md)
 - [Architecture and fidelity limits](docs/ARCHITECTURE.md)
+- [Tested configuration and validation results](docs/VALIDATION.md)
 - [Contribution rules](CONTRIBUTING.md)
 
 ```powershell

@@ -199,4 +199,6 @@ report = {
 bpy.ops.wm.save_as_mainfile(
     filepath=str(root / "Schedule_I_Main_EDITOR.blend"), compress=True
 )
-print("EDITOR SAVED", json.dumps(report), flush=True)
+summary = {key: value for key, value in report.items() if key != "source_renderer_ids"}
+summary["source_renderer_count"] = len(expected_renderer_ids)
+print("EDITOR SAVED", json.dumps(summary), flush=True)

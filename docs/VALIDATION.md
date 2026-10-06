@@ -33,3 +33,20 @@ successful build as recovery of every URP setting or exact runtime shader parity
 
 All generated evidence, textures, manifests and Blender files remain local. Only
 this numerical summary and original tooling are distributed.
+
+## Road preview correction
+
+The same local game extraction exposed two independent preview issues. The saved
+four-way intersection material had wetness 0.9 and smoothness 1.0; eleven dry
+materials using the same GroundWet shader had smoothness 0.2. The clear-weather
+translation now derives wet outliers' smoothness from the median dry peer, while
+retaining original values in material metadata. It does not reproduce the game's
+runtime weather logic. A fresh Blender generator check verified roughness 0.8 for
+the intersection and dry road, and unchanged roughness 1.0 for the overpass ramp.
+
+At the same distant camera pose, increasing near clipping from 0.01m to 0.5m
+removed bridge depth artifacts without changing geometry. Viewports and generated
+reference cameras now use 0.5m. Near and distant Material Preview comparisons used
+the saved editor scene. The corrected existing editor and full-detail files passed
+fresh-process validation; editor geometry counts, packed texture budget and source
+renderer coverage were unchanged. The extraction was not repeated for this change.

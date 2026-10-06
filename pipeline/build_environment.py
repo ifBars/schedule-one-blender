@@ -335,6 +335,7 @@ scene.world["native_noon_sky"] = json.dumps(daylight)
 def camera(name, position, target, lens=40, ortho=None):
     d = bpy.data.cameras.new(name)
     d.lens = lens
+    d.clip_start = MAP_CLIP_START
     d.clip_end = 4000
     if ortho:
         d.type = "ORTHO"

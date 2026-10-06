@@ -9,7 +9,11 @@ import numpy as np
 from mathutils import Matrix, Vector, Quaternion
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+from surface_settings import MAP_CLIP_START, clear_weather_smoothness
+
 D = json.loads((ROOT / "main_manifest.json").read_text(encoding="utf-8"))
+clear_smoothness = clear_weather_smoothness(D["materials"])
 N = json.loads(
     (ROOT / "native_rendering/render_components.json").read_text(encoding="utf-8")
 )
@@ -190,6 +194,13 @@ def material(k):
     bs.inputs["Base Color"].default_value = color
     m.diffuse_color = color
     smooth = f.get("_Smoothness", f.get("_Glossiness", 0.15))
+    if k in clear_smoothness:
+        smooth = clear_smoothness[k]
+        m["clear_weather_smoothness"] = smooth
+        m["surface_translation_note"] = (
+            "Clear-weather approximation using median native dry GroundWet smoothness; "
+            "serialized wet values retained in source_parameters"
+        )
     bs.inputs["Roughness"].default_value = max(0.03, min(1, 1 - smooth))
     bs.inputs["Metallic"].default_value = max(0, min(1, f.get("_Metallic", 0)))
     notes = []
@@ -645,6 +656,7 @@ for screen in bpy.data.screens:
     for area in screen.areas:
         if area.type == "VIEW_3D":
             space = area.spaces.active
+            space.clip_start = MAP_CLIP_START
             space.clip_end = 3000
             space.shading.type = "SOLID"
             space.shading.color_type = "MATERIAL"

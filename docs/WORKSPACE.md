@@ -28,6 +28,13 @@ objects. Inactive and alternative LOD collections are excluded initially; turnin
 all LODs on at once produces overlap. Terrain blend maps contain four independent
 weights and must use Non-Color + Channel Packed. Never resize them as transparency.
 
+Map viewports and reference cameras use a 0.5m near clipping distance to prevent
+distant bridge surfaces from flickering. For close detail work, temporarily lower
+View > Clip Start in the sidebar, then restore 0.5m before viewing the whole map.
+Clear-weather road shading matches saved wet GroundWet outliers to the median
+smoothness of native dry peers. This is an approximation; original material
+parameters remain available in each material's `source_parameters` property.
+
 This is a serialized visual reference, not a playable Unity project. Collision,
 navigation, save integration, multiplayer, runtime-spawned objects, procedural
 grass, weather and gameplay scripts are not reconstructed. Custom shaders and

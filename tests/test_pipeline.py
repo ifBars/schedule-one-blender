@@ -24,6 +24,40 @@ def load(name, path):
 proxy = load("proxy", ROOT / "pipeline/editor_texture_proxy.py")
 audit = load("audit", ROOT / "scripts/audit_repo.py")
 bindings = load("bindings", ROOT / "pipeline/render_binding_helpers.py")
+surface = load("surface", ROOT / "pipeline/surface_settings.py")
+
+
+class SurfaceTests(unittest.TestCase):
+    def test_clear_weather_uses_native_dry_peers_only(self):
+        def material(rain, smooth, shader="Shader Graphs/GroundWet"):
+            return {
+                "shader": shader,
+                "floats": {"_RainValue": rain, "_Smoothness": smooth},
+            }
+
+        materials = {
+            "dry_a": material(0, 0.1),
+            "dry_b": material(0, 0.3),
+            "wet": material(0.9, 1),
+            "already_rough": material(1, 0.1),
+            "other_shader": material(0, 0.9, "Other"),
+            "invalid": material(0, float("nan")),
+        }
+        self.assertEqual(surface.clear_weather_smoothness(materials), {"wet": 0.2})
+        self.assertEqual(materials["wet"]["floats"]["_Smoothness"], 1)
+
+    def test_no_dry_reference_preserves_source(self):
+        self.assertEqual(
+            surface.clear_weather_smoothness(
+                {
+                    "wet": {
+                        "shader": "Shader Graphs/GroundWet",
+                        "floats": {"_RainValue": 1, "_Smoothness": 1},
+                    }
+                }
+            ),
+            {},
+        )
 
 
 class BindingTests(unittest.TestCase):

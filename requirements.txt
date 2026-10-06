@@ -1,0 +1,15 @@
+UnityPy==1.25.4
+TypeTreeGeneratorAPI==0.0.10
+numpy==2.5.3
+Pillow==12.3.0
+attrs==26.1.0
+archspec==0.2.6
+astc-encoder-py==0.1.12
+brotli==1.2.0
+etcpak==0.9.15
+fmod-toolkit==0.1.3
+fsspec==2026.9.0
+lz4==4.4.5
+pyfmodex==0.7.2
+texture2ddecoder==1.0.6
+tpk-ar==0.2.4

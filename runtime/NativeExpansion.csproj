@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>ScheduleOne.NativeExpansion</AssemblyName>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GamePath)/MelonLoader/net35/MelonLoader.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GamePath)/Schedule I_Data/Managed/UnityEngine*.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GamePath)/Schedule I_Data/Managed/Newtonsoft.Json.dll"><Private>false</Private></Reference>
+  </ItemGroup>
+  <Target Name="CheckGamePath" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(GamePath)/MelonLoader/net35/MelonLoader.dll')" Text="Set GamePath to your Mono game copy with MelonLoader installed." />
+  </Target>
+</Project>

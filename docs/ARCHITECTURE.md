@@ -3,7 +3,7 @@
 The CLI snapshots original stage scripts and a workspace README into each local
 output directory. This keeps stage-relative file references deterministic and
 gives agents inspectable scripts next to private intermediate data. Python does
-asset decoding; Blender's own Python does scene creation. No game code is executed.
+asset decoding; Blender's own Python does scene creation. Offline extraction does not execute game code.
 
 UnityPy locates Main through BuildSettings, follows native asset references and
 decodes mesh channels, static batches, terrain heights/holes, splat textures and
@@ -32,10 +32,21 @@ The noon sun controller factor and height normalization are verified assumptions
 for the tested game version and require review if native behavior changes.
 
 Serialized skinned meshes are frozen; runtime-spawned entities and gameplay state
-are absent. This does not create a Unity mod, collision/navigation solution or
-networked map expansion. Author original content against the reference and test
-the actual mod separately.
+are absent. The reference stage alone does not create a playable mod. The optional
+[native expansion workflow](EXPANSIONS.md) adds a placement recipe, a Mono runtime
+loader and a local Unity preview. It supports native mesh placement and explicit
+collision, with no gameplay component cloning or navigation/network integration.
 
 CI can prove synthetic channel preservation, discovery behavior, output guards
 and repository hygiene. Full scene completeness requires the user's local game,
 fresh Blender validation and visual inspection; none of those assets belongs in CI.
+
+The native loader reads GPU mesh buffers because shipped static batches often lack
+CPU copies. It compacts the selected submeshes, preserves vertex streams and undoes
+batching using `Transform.worldToLocalMatrix * Renderer.localToWorldMatrix`.
+Unity documents why the renderer matrix is required for batched coordinates in
+[Renderer.localToWorldMatrix](https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Renderer-localToWorldMatrix.html).
+Reference selectors use names plus original world positions, with exact material
+and shader-name checks. Game-version tokens must match; path IDs are never used at
+runtime. This is compatibility checking, not proof of identical geometry in every
+build sharing a version number.

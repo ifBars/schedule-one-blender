@@ -50,3 +50,43 @@ reference cameras now use 0.5m. Near and distant Material Preview comparisons us
 the saved editor scene. The corrected existing editor and full-detail files passed
 fresh-process validation; editor geometry counts, packed texture budget and source
 renderer coverage were unchanged. The extraction was not repeated for this change.
+
+## Native bridge expansion prototype
+
+Local validation on 2026-10-07 used Windows, Blender 5.2.2 LTS, Unity 2022.3.62f2,
+and a separate Mono 0.4.7f9 Alternate game copy with MelonLoader 0.7.3. A copied
+completed save reached normal gameplay; the user's original install/save was not
+patched. Original editor and full-detail Blender hashes remained unchanged.
+
+- The bridge planner produced fourteen 10 m spans and replaced three incomplete
+  end groups. It added 94 invisible road-collision references and replaced 47
+  native concrete deck objects with matching visuals and accurate mesh collision.
+- The runtime built 631 placements using 173 shared compact meshes (39,536 unique
+  vertices), with 575 mesh colliders. Native material objects and vertex streams
+  were reused. The extension's repeating module uses 35 source meshes.
+- 634 downward deck raycasts and two forward capsule sweeps passed across the new
+  span and both joins. These probes initially missed a distance-enabled native
+  box-collider lip; an actual native CharacterController traversal exposed it.
+  After replacing the oversized deck boxes, the controller crossed both lanes
+  from Unity Z=137 to Z=294 without falling or stalling. Returning to the menu and
+  reloading produced exactly one expansion root with 631 parts.
+- In-game aerial and road-level views were inspected for road/railing alignment
+  and native rendering. The saved Blender scene reopened successfully, retained
+  1,296 packed images no larger than 512px, rejected geometry/UV edits, and passed
+  linked duplication/export checks. A textured Blender render was inspected.
+- Unity imported the local preview into a real project. A rendered view exposed
+  NumPy's shaped inverse-index output; flattening it before submesh slicing fixed
+  the geometry. A synthetic regression test checks flat indices and submesh
+  boundaries. The corrected preview contains 307,158 triangle indices across its
+  instances and was checked visually. Preview materials are approximations.
+- Synthetic Unity checks passed GPU-only mesh compaction, packed-color/UV
+  preservation, transform rejection, and nonidentity static-batch root conversion.
+- A fresh Mono extraction completed with 64,252 renderer records and zero extraction
+  errors. Nonempty decoded renderers now retain shadow/receive-shadow metadata;
+  required render bindings resolved. One optional native component still did not
+  decode, as described above. Kit generation passed using this new extraction.
+
+This is single-player Mono evidence. NPC navigation, traffic, multiplayer, IL2CPP,
+new baked lighting and arbitrary edited-mesh export are not validated or supplied
+by this prototype. Source tests, import success and gameplay evidence remain
+separate. All asset-containing outputs and raw test evidence stayed local.

@@ -14,6 +14,10 @@ lights/world in the viewport shading popover only when needed.
 Save your edits under a new filename, outside this generated build directory.
 The build directory is a reproducible cache, not your authored mod project.
 
+For linked native kits, placement export, a local Unity preview and the Mono loader,
+follow the repository's **docs/EXPANSIONS.md** guide. It creates a separate authored
+workspace and leaves this reference unchanged.
+
 ## Authoring an expansion
 
 Add your own content to `06 · YOUR MAP EXPANSION`. Keep the reference origin fixed.

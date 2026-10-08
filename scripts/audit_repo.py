@@ -16,12 +16,20 @@ ROOT_FILES = {
     ".gitignore",
     ".gitattributes",
 }
+NATIVE_SOURCE_FILES = {
+    "runtime/NativeExpansion.csproj",
+    "runtime/Recipe.cs",
+    "runtime/NativeMesh.cs",
+    "runtime/ExpansionMod.cs",
+    "unity/NativeExpansionImporter.cs",
+    "unity/NativeExpansionTests.cs",
+}
 SOURCE_DIRS = {"s1blender", "pipeline", "tests", "scripts"}
 
 
 def allowed_path(name):
     path = PurePosixPath(name)
-    if name in ROOT_FILES:
+    if name in ROOT_FILES or name in NATIVE_SOURCE_FILES:
         return True
     if len(path.parts) == 2 and path.parts[0] in SOURCE_DIRS and path.suffix == ".py":
         return True

@@ -74,6 +74,14 @@ master inexpensive to open.
 Save your own project under a new name. Add expansion content to
 `06 · YOUR MAP EXPANSION`; see [the authoring guide](docs/WORKSPACE.md).
 
+## Native expansion prototype
+
+[Create a native bridge expansion](docs/EXPANSIONS.md) with linked Blender pieces,
+a placement-only export, a local Unity preview importer and a Mono runtime loader.
+The loader resolves meshes/materials from each user's game copy. The bridge example
+connects the mainland overpass to the north island and adds approach collision.
+Generated scenes and preview assets remain local; only tooling is distributed.
+
 ## Automation and contributing
 
 - [Build phases, resume, troubleshooting](docs/BUILD.md)

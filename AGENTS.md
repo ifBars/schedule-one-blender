@@ -52,3 +52,24 @@ with the same inputs/tooling; after changing code, use a new output directory.
 Completed `.blend` files are hash-checked to avoid overwriting user edits.
 Publication requires a clean index and reachable-history audit; Git ignore rules alone are not
 proof that a repository contains no game assets.
+
+## Native expansion workflow
+
+`s1blender/expansion.py` prepares local kits/plans; `pipeline/native_expansion.py`
+authors linked Blender instances and exports reference-only recipes. `runtime/`
+contains the Mono loader. `unity/` contains the local preview importer and synthetic
+Unity checks. Read `docs/EXPANSIONS.md` before changing this path.
+
+- Preserve full source selectors and material signatures; never publish baked
+  game meshes to make runtime resolution easier.
+- Decode only selected submeshes from GPU-only static batches. Use the renderer's
+  rendering matrix when undoing static batching; preserve all vertex streams.
+- Native-reference export must reject edits it cannot represent. Keep collision-only
+  placements invisible and restore suppressed native objects on unload.
+- Keep this path's validation separate from unchanged reference-map validation.
+  Run `pipeline/validate_expansion.py` in a fresh Blender process for authored files;
+  the original `validate_blend.py`/`validate_editor.py` remain the reference validators.
+- Exercise native controller traversal and scene reload after collision/lifecycle
+  changes. Mono success is not IL2CPP or multiplayer proof.
+- Extend `scripts/audit_repo.py` only with exact original source filenames. Generated
+  recipes, local preview data, game references and Unity projects remain ignored/local.

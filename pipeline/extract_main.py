@@ -267,6 +267,8 @@ for i, (rid, (kind, d)) in enumerate(renderers.items()):
             "kind": kind,
             "batch_first": batch.firstSubMesh if batch else 0,
             "batch_count": batch.subMeshCount if batch else 0,
+                "shadow_mode": int(d.m_CastShadows),
+                "receive_shadows": bool(d.m_ReceiveShadows),
             "batch_root": transform_go.get(d.m_StaticBatchRoot.m_PathID, 0)
             if d.m_StaticBatchRoot
             else 0,
